@@ -6,7 +6,7 @@
 /*   By: tnghondz <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/24 16:30:30 by tnghondz          #+#    #+#             */
-/*   Updated: 2018/07/02 13:00:22 by tnghondz         ###   ########.fr       */
+/*   Updated: 2018/07/02 16:31:06 by tnghondz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,12 @@
 #include "../includes/get_next_line.h"
 #include <stdio.h>
 
-void	init_player(t_player *player)
+void	init_player(int fd, t_player *player)
 {
 	char	*line;
-
-	if(get_next_line(0, &line) && line  && (!(ft_strncmp(line, "$$$ exec p", 9))))
+	
+	get_next_line(fd, &line);
+	if((!(ft_strncmp(line, "$$$ exec p", 10))))
 	{
 		if(line[10] == '1')
 		{
@@ -126,10 +127,54 @@ void	piece_size(int fd, t_map_piece *piece)
 	}
 }
 
+void start_map(char **map, char **piece, t_map_piece tmp, t_player me)
+{
+	int m_x;
+	int m_y;
+	int p_x;
+	int p_y;
+
+	m_x = 0;
+	m_y = 0;
+	p_x = 0;
+	p_y = 0;
+
+	while(m_y < tmp->y_rows)
+	{
+		m_x = 0;
+		while(map[m_y][m_x] != '\0')
+		{
+			if(map[m_y][m_x] == me->my_shape)
+			{
+				tmp->m_start_x = m_x;
+				tmp->m_start_y = m_y;
+				return ;
+			}
+			m_x++;
+		}
+		m_y++;
+	}
+	while(p_y < tmp->y_piece)
+	{
+		p_x = 0;
+		while(piece[p_y][p_x] != '\0')
+		{
+			if(piece[p_y][p_x] == '*')
+			{
+				tmp->m_start_x = j;
+				tmp->m_start_y = i;
+				return ;
+			}
+			p_x++;
+		}
+		p_y++;
+	}
+}
+
 
 int main(int argc, char **argv)
 {
-	//t_player *me;
+	t_player *me;
 	t_map_piece *map_size;
 	int m = 0;
 	int p = 0;
@@ -139,13 +184,14 @@ int main(int argc, char **argv)
 	
 	if (argc == 1) return (0);
   	int fd = open(argv[1], O_RDONLY);
-	//init_player(me);
-	//ft_putchar(me->id);
-	map_size  = (t_map_piece *) malloc (sizeof(t_map_piece *));
+  	me = (t_player *) malloc (sizeof(t_player *));
+	init_player(fd,me);
+	ft_putchar(me->id);
+//	map_size  = (t_map_piece *) malloc (sizeof(t_map_piece *));
 //	m_size(fd, map_size);
 //	map = read_map(fd, map_size);
-	piece_size(fd, map_size);
-	piece = read_piece(fd, map_size);
+//	piece_size(fd, map_size);
+//	piece = read_piece(fd, map_size);
 /*	while(m < map_size->y_rows)
 	{
 		ft_putstr(map[m]);
@@ -153,12 +199,12 @@ int main(int argc, char **argv)
 			ft_putchar('\n');
 		m++;
 	}*/
-	while(p < map_size->y_piece)
+/*	while(p < map_size->y_piece)
 	{
 		ft_putstr(piece[p]);
 			ft_putchar('\n');
 		p++;
-	}
+	}*/
 //	printf("%i %i\n", map_size->y_piece, map_size->x_piece);
  	close(fd);
 }

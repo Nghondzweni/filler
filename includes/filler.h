@@ -6,7 +6,7 @@
 /*   By: tnghondz <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/24 16:24:15 by tnghondz          #+#    #+#             */
-/*   Updated: 2018/07/02 12:39:45 by tnghondz         ###   ########.fr       */
+/*   Updated: 2018/07/02 16:31:14 by tnghondz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,5 +28,9 @@ typedef struct	s_map_piece
 	int y_rows;
 	int	x_piece;
 	int	y_piece;
+	int m_start_x;
+	int m_start_y;
+	int p_start_x;
+	int p_start_y;
 }				t_map_piece;
 #endif
