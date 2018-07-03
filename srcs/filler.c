@@ -6,7 +6,7 @@
 /*   By: tnghondz <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/24 16:30:30 by tnghondz          #+#    #+#             */
-/*   Updated: 2018/07/02 19:20:48 by tnghondz         ###   ########.fr       */
+/*   Updated: 2018/07/03 14:56:08 by tnghondz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,20 +47,18 @@ void	m_size(int fd, t_map_piece *map)
 
 	get_next_line(fd, &line);
 	while(ft_strncmp(line, "Plateau ", 8))
-	{
 		get_next_line(fd, &line);
-		if(!(ft_strncmp(line, "Plateau ", 8)))
-		{
-			
-			y_pos = ft_strchr(line, ' ');
-			map->y_rows = ft_atoi(y_pos);
-			y_pos++;
-			x_pos = ft_strchr(y_pos, ' ');
-			map->x_cols = ft_atoi(x_pos);
-			free(line);
-			return ;
-		}
+	if(!(ft_strncmp(line, "Plateau ", 8)))
+	{
+		y_pos = ft_strchr(line, ' ');
+		map->y_rows = ft_atoi(y_pos);
+		y_pos++;
+		x_pos = ft_strchr(y_pos, ' ');
+		map->x_cols = ft_atoi(x_pos);
+		free(line);
+		return ;
 	}
+	
 }
 char **read_map(int fd, t_map_piece *read_map_into)
 {
@@ -77,9 +75,11 @@ char **read_map(int fd, t_map_piece *read_map_into)
 	while(i < (read_map_into->y_rows))
 	{
 		map[i] =  begin + 4;
-		get_next_line(fd, &begin);
+		if(i < (read_map_into->y_rows - 1))
+			get_next_line(fd, &begin);
 		i++;
 	}
+	free(begin);
 	return(map);
 }
 
@@ -99,9 +99,11 @@ char **read_piece(int fd, t_map_piece *read_piece_into)
 	while(i < (read_piece_into->y_piece))
 	{
 		piece[i] =  begin;
-		get_next_line(fd, &begin);
+		if(i < (read_piece_into->y_piece - 1))
+			get_next_line(fd, &begin);
 		i++;
 	}
+	free(begin);
 	return(piece);
 }
 
@@ -113,19 +115,16 @@ void	piece_size(int fd, t_map_piece *piece)
 
 	get_next_line(fd, &line);
 	while(ft_strncmp(line, "Piece ", 6))
-	{
 		get_next_line(fd, &line);
-		if(!(ft_strncmp(line, "Piece ", 6)))
-		{
-			
-			y_pos = ft_strchr(line, ' ');
-			piece->y_piece = ft_atoi(y_pos);
-			y_pos++;
-			x_pos = ft_strchr(y_pos, ' ');
-			piece->x_piece = ft_atoi(x_pos);
-			free(line);
-			return ;
-		}
+	if(!(ft_strncmp(line, "Piece ", 6)))
+	{
+		y_pos = ft_strchr(line, ' ');
+		piece->y_piece = ft_atoi(y_pos);
+		y_pos++;
+		x_pos = ft_strchr(y_pos, ' ');
+		piece->x_piece = ft_atoi(x_pos);
+		free(line);
+		return ;
 	}
 }
 
@@ -190,25 +189,28 @@ int main(int argc, char **argv)
   	int fd = open(argv[1], O_RDONLY);
  	me = (t_player *) malloc (sizeof(*me));
 	init_player(fd,me);
-	ft_putchar(me->my_shape);
 	map_size  = (t_map_piece *) malloc (sizeof(*map_size));
 	m_size(fd, map_size);
 	map = read_map(fd, map_size);
-//	piece_size(fd, map_size);
-//	piece = read_piece(fd, map_size);
-	while(m < map_size->y_rows)
+	piece_size(fd, map_size);
+	piece = read_piece(fd, map_size);
+	start_map(map, map_size, me);
+	start_piece(piece, map_size);
+	printf("map x: %i map y: %i\n",map_size->m_start_x, map_size->m_start_y);
+	while(m < map_size->y_rows-1)
 	{
 		ft_putstr(map[m]);
 		if(m != map_size->y_rows)
 			ft_putchar('\n');
 		m++;
 	}
-/*	while(p < map_size->y_piece)
+	while(p < map_size->y_piece)
 	{
 		ft_putstr(piece[p]);
+	//	if(m != map_size->y_rows)
 			ft_putchar('\n');
 		p++;
-	}*/
+	}
 //	printf("%i %i\n", map_size->y_piece, map_size->x_piece);
  	close(fd);
 }
