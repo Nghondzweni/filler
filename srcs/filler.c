@@ -6,7 +6,7 @@
 /*   By: tnghondz <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/24 16:30:30 by tnghondz          #+#    #+#             */
-/*   Updated: 2018/07/03 14:56:08 by tnghondz         ###   ########.fr       */
+/*   Updated: 2018/07/05 14:12:50 by tnghondz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,28 @@ void start_piece(char ** piece, t_map_piece *p_info)
 	}
 }
 
+int get_shape_num_p(char **piece, t_map_piece *p_info)
+{
+	int x;
+	int y;
+	int shapes;
+
+	y = 0;
+	shapes = 0;
+	while(y < p_info->y_piece)
+	{
+		x = 0;
+		while(x < p_info->x_piece)
+		{
+			if(piece[y][x] == '*')
+				shapes++;
+			x++;
+		}
+		y++;
+	}
+	return(shapes);
+}
+
 
 int main(int argc, char **argv)
 {
@@ -196,7 +218,7 @@ int main(int argc, char **argv)
 	piece = read_piece(fd, map_size);
 	start_map(map, map_size, me);
 	start_piece(piece, map_size);
-	printf("map x: %i map y: %i\n",map_size->m_start_x, map_size->m_start_y);
+	printf("map x: %i map y: %i\n",map_size->x_cols, map_size->y_rows);
 	while(m < map_size->y_rows-1)
 	{
 		ft_putstr(map[m]);
@@ -211,6 +233,7 @@ int main(int argc, char **argv)
 			ft_putchar('\n');
 		p++;
 	}
+	ft_putnbr(get_shape_num_p(piece, map_size));
 //	printf("%i %i\n", map_size->y_piece, map_size->x_piece);
  	close(fd);
 }
