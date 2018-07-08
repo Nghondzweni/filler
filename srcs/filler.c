@@ -6,7 +6,7 @@
 /*   By: tnghondz <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/24 16:30:30 by tnghondz          #+#    #+#             */
-/*   Updated: 2018/07/05 14:12:50 by tnghondz         ###   ########.fr       */
+/*   Updated: 2018/07/08 22:45:36 by tnghondz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,8 +164,8 @@ void start_piece(char ** piece, t_map_piece *p_info)
 		{
 			if(piece[p_y][p_x] == '*')
 			{
-				p_info->p_start_x = p_x;
-				p_info->p_start_y = p_y;
+				p_info->p_first_x = p_x;
+				p_info->p_first_y = p_y;
 				return ;
 			}
 			p_x++;
@@ -196,6 +196,122 @@ int get_shape_num_p(char **piece, t_map_piece *p_info)
 	return(shapes);
 }
 
+void find_left_start_p(char **piece, t_map_piece *info)
+{
+	int	x;
+	int	y;
+
+	x = 0;
+	while(x < info->x_piece)
+	{
+		y = 0;
+		while(y < info->y_piece)
+		{
+			if(piece[y][x] == '*')
+			{
+				info->p_left_start = x;
+				return ;
+			}
+			y++;
+		}
+		x++;
+	}
+}
+
+void find_top_start_p(char **piece, t_map_piece *info)
+{
+	int	x;
+	int	y;
+
+	y = 0;
+	while(y < info->y_piece)
+	{
+		x = 0;
+		while(x < info->y_piece)
+		{
+			if(piece[y][x] == '*')
+			{
+				info->p_top_start = y;
+				return ;
+			}
+			x++;
+		}
+		y++;
+	}
+}
+
+void find_right_end_p(char **piece, t_map_piece *info)
+{
+	int	x;
+	int	y;
+
+	x = info->x_piece - 1;
+	while(x > 0)
+	{
+		y = info->y_piece - 1;
+		while(y > 0)
+		{
+			if(piece[y][x] == '*')
+			{
+				info->p_right_end = x;
+				return ;
+			}
+			y--;
+		}
+		x--;
+	}
+}
+
+void find_bottom_end_p(char **piece, t_map_piece *info)
+{
+	int	x;
+	int	y;
+
+	x = info->x_piece - 1;
+	while(x > 0)
+	{
+		y = info->y_piece - 1;
+		while(y > 0)
+		{
+			if(piece[y][x] == '*')
+			{
+				info->p_bottom_end = y;
+				return ;
+			}
+			y--;
+		}
+		x--;
+	}
+}
+
+
+/*int place_piece(char **map, char **piece, t_map_piece *mp_info, t_player *me)
+{
+	int x_m;
+	int y_m;
+	int x_p;
+	int y_p;
+	int p_shapes;
+
+	while(y_p < mp_info->y_piece)
+	{
+		x_p = 0;
+		while(x_p < mp_info->x_piece)
+		{
+			if(piece[y_p][x_p] == '*' && map[m_start_y + y_p][m_start_x + x_p] == '.')
+			{
+				map[m_start_y + y_p][m_start_x + x_p] = me->my_shape;
+				p_shapes--;
+			}
+			else
+			{
+				m_start_x++;
+				start_map(map, mp_info, me);
+			}
+		}
+	}
+}
+*/
 
 int main(int argc, char **argv)
 {
@@ -216,9 +332,9 @@ int main(int argc, char **argv)
 	map = read_map(fd, map_size);
 	piece_size(fd, map_size);
 	piece = read_piece(fd, map_size);
-	start_map(map, map_size, me);
-	start_piece(piece, map_size);
-	printf("map x: %i map y: %i\n",map_size->x_cols, map_size->y_rows);
+//	start_map(map, map_size, me);
+//	start_piece(piece, map_size);
+//	printf("map x: %i map y: %i\n",map_size->x_cols, map_size->y_rows);
 	while(m < map_size->y_rows-1)
 	{
 		ft_putstr(map[m]);
@@ -233,7 +349,12 @@ int main(int argc, char **argv)
 			ft_putchar('\n');
 		p++;
 	}
-	ft_putnbr(get_shape_num_p(piece, map_size));
+	find_left_start_p(piece, map_size);
+	find_bottom_end_p(piece, map_size);
+	find_top_start_p(piece, map_size);
+	find_right_end_p(piece, map_size);
+	printf("left start: %i, top start: %i, right end: %i, bottom end: %i", map_size->p_left_start, map_size->p_top_start, map_size->p_right_end, map_size->p_bottom_end);
+//	ft_putnbr(get_shape_num_p(piece, map_size));
 //	printf("%i %i\n", map_size->y_piece, map_size->x_piece);
  	close(fd);
 }
