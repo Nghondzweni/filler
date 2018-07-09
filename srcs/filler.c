@@ -6,7 +6,7 @@
 /*   By: tnghondz <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/24 16:30:30 by tnghondz          #+#    #+#             */
-/*   Updated: 2018/07/08 22:45:36 by tnghondz         ###   ########.fr       */
+/*   Updated: 2018/07/09 12:23:50 by tnghondz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,7 +195,7 @@ int get_shape_num_p(char **piece, t_map_piece *p_info)
 	}
 	return(shapes);
 }
-
+/*
 void find_left_start_p(char **piece, t_map_piece *info)
 {
 	int	x;
@@ -283,7 +283,7 @@ void find_bottom_end_p(char **piece, t_map_piece *info)
 		x--;
 	}
 }
-
+*/
 
 /*int place_piece(char **map, char **piece, t_map_piece *mp_info, t_player *me)
 {
