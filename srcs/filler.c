@@ -6,11 +6,7 @@
 /*   By: tnghondz <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/24 16:30:30 by tnghondz          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2018/07/09 16:55:05 by mtshisw          ###   ########.fr       */
-=======
-/*   Updated: 2018/07/10 16:10:52 by mtshisw          ###   ########.fr       */
->>>>>>> d40b3ced1152edfe5524eb6da625fa870445b4a9
+/*   Updated: 2018/07/10 16:37:54 by tnghondz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +37,32 @@ void	init_player(int fd, t_player *player)
 		ft_strdel(&line);
 		return ;
 	}
+}
+
+void place_piece(t_map_piece *info)
+{
+    int p_y;
+    int p_x;
+    int m_x;
+    int m_y;
+    
+    p_y = info->y_piece - 1;
+    m_x = info->x_cols - 1;
+    m_y = info->y_rows - 1;
+    while(p_y >= 0 && m_y - y_piece >= 0)
+    {
+        p_x = info->x_piece - 1;
+        while(p_x >= 0 && (m_x - x_piece >= 0))
+        {
+            if(piece != '.')
+                info->temp_map[m_y][m_x] = me->me_shape;
+            m_x--;
+            p_x--;
+        }
+        m_y--;
+        p_y = info->y_piece - 1;
+    }
+    
 }
 
 void	m_size(int fd, t_map_piece *map)
@@ -234,7 +256,6 @@ void get_os_xs_num(t_map_piece *p_info)
     }
     p_info->os_num = os;
 	p_info->xs_num = xs;
-<<<<<<< HEAD
 }
 
 void get_temp_os_xs(t_map_piece *p_info)
@@ -262,82 +283,6 @@ void get_temp_os_xs(t_map_piece *p_info)
     }
     p_info->temp_os = os;
 	p_info->temp_xs = xs;
-}
-
-void place_piece(t_map_piece *info)
-{
-    int p_y;
-    int p_x;
-    int m_x;
-    int m_y;
-    
-    p_y = info->y_piece - 1;
-    m_x = info->x_cols - 1;
-    m_y = info->y_rows - 1;
-    while(p_y >= 0 && m_y - y_piece >= 0)
-    {
-        p_x = info->x_piece - 1;
-        while(p_x >= 0 && (m_x - x_piece >= 0))
-        {
-            if(piece != '.')
-                info->temp_map[m_y][m_x] = me->me_shape;
-            m_x--;
-            p_x--;
-        }
-        m_y--;
-        p_y = info->y_piece - 1;
-    }
-    
-=======
-}
-
-void get_temp_os_xs(t_map_piece *p_info)
-{
-    int x;
-    int y;
-    int os;
-	int xs;
-
-    y = 0;
-    os = 0;
-	xs = 0;
-    while(y < p_info->y_rows)
-    {
-        x = 0;
-        while(x < p_info->x_cols)
-        {
-            if(p_info->temp_map[y][x] == 'O' || p_info->temp_map[y][x] == 'o')
-                os++;
-			else if(p_info->temp_map[y][x] == 'X' || p_info->temp_map[y][x] == 'x')
-				xs++;
-            x++;
-        }
-        y++;
-    }
-    p_info->temp_os = os;
-	p_info->temp_xs = xs;
-}
-
-void	check_placement(t_map_piece *p_info)
-{
-	t_player	shape;
-
-	if (shape->my_shape = 'O')
-	{
-		if ((p_info->os_num + p_info->add_num - 1) = p_info->temp_os && p_info->xs_num == p_info->tem_xs)
-			p_info->check = 0;
-		else
-			p_info->check = 1;
-	}
-	else if (shape->my_shape = 'X')
-    {
-		if ((p_info->xs_num + p_info->add_num - 1) = p_info->temp_xs && p_info->os_num == p_info->tem_os)
-			p_info->check = 0;
-		else
-			p_info->check = 1;
-	}
-	return ;
->>>>>>> d40b3ced1152edfe5524eb6da625fa870445b4a9
 }
 
 /*
@@ -461,6 +406,26 @@ void find_bottom_end_p(char **piece, t_map_piece *info)
 	}
 }
 */
+void	check_placement(t_map_piece *p_info)
+{
+	t_player	shape;
+
+	if (shape->my_shape = 'O')
+	{
+		if ((p_info->os_num + p_info->add_num - 1) = p_info->temp_os && p_info->xs_num == p_info->tem_xs)
+			p_info->check = 0;
+		else
+			p_info->check = 1;
+	}
+	else if (shape->my_shape = 'X')
+    {
+		if ((p_info->xs_num + p_info->add_num - 1) = p_info->temp_xs && p_info->os_num == p_info->tem_os)
+			p_info->check = 0;
+		else
+			p_info->check = 1;
+	}
+	return ;
+}
 
 int main(int argc, char **argv)
 {
@@ -483,11 +448,6 @@ int main(int argc, char **argv)
 	get_os_xs_num(map_size);
 	get_temp_os_xs(map_size);
 	printf("%d %d %d %d %d\n", map_size->add_num, map_size->os_num, map_size->xs_num, map_size->temp_os, map_size->temp_xs);
-<<<<<<< HEAD
-=======
-	check_placement(map_size);
-
->>>>>>> d40b3ced1152edfe5524eb6da625fa870445b4a9
 //	start_map(map, map_size, me);
 //	start_piece(piece, map_size);
 //	printf("map x: %i map y: %i\n",map_size->x_cols, map_size->y_rows);
@@ -516,3 +476,4 @@ int main(int argc, char **argv)
 //	printf("%i %i\n", map_size->y_piece, map_size->x_piece);
  	close(fd);
 }
+
