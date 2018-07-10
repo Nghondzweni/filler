@@ -6,7 +6,7 @@
 /*   By: tnghondz <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/24 16:30:30 by tnghondz          #+#    #+#             */
-/*   Updated: 2018/07/10 16:37:54 by tnghondz         ###   ########.fr       */
+/*   Updated: 2018/07/10 17:34:03 by mtshisw          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -406,74 +406,77 @@ void find_bottom_end_p(char **piece, t_map_piece *info)
 	}
 }
 */
-void	check_placement(t_map_piece *p_info)
+void    check_placement(t_map_piece *p_info, t_player *shape)
 {
-	t_player	shape;
 
-	if (shape->my_shape = 'O')
-	{
-		if ((p_info->os_num + p_info->add_num - 1) = p_info->temp_os && p_info->xs_num == p_info->tem_xs)
-			p_info->check = 0;
-		else
-			p_info->check = 1;
-	}
-	else if (shape->my_shape = 'X')
+    if (shape->my_shape == 'O')
     {
-		if ((p_info->xs_num + p_info->add_num - 1) = p_info->temp_xs && p_info->os_num == p_info->tem_os)
-			p_info->check = 0;
-		else
-			p_info->check = 1;
-	}
-	return ;
+        if ((p_info->os_num + p_info->add_num - 1) == p_info->temp_os &&
+                (p_info->xs_num == p_info->temp_xs))
+            p_info->check = 0;
+        else
+            p_info->check = 1;
+    }
+    else if (shape->my_shape == 'X')
+    {
+        if ((p_info->xs_num + p_info->add_num - 1) == p_info->temp_xs &&
+                (p_info->os_num == p_info->temp_os))
+            p_info->check = 0;
+        else
+            p_info->check = 1;
+    }
+    return ;
 }
 
 int main(int argc, char **argv)
 {
-	t_player *me;
-	t_map_piece *map_size;
-	int m = 0;
-	int p = 0;
-		
-	if (argc == 1) return (0);
-  	int fd = open(argv[1], O_RDONLY);
- 	me = (t_player *) malloc (sizeof(*me));
-	init_player(fd,me);
-	map_size  = (t_map_piece *) malloc (sizeof(*map_size));
-	m_size(fd, map_size);
-	read_map(fd, map_size);
-	copy_tmp_map(map_size);
-	piece_size(fd, map_size);
-	read_piece(fd, map_size);
-	get_shape_num_p(map_size);
-	get_os_xs_num(map_size);
-	get_temp_os_xs(map_size);
-	printf("%d %d %d %d %d\n", map_size->add_num, map_size->os_num, map_size->xs_num, map_size->temp_os, map_size->temp_xs);
-//	start_map(map, map_size, me);
-//	start_piece(piece, map_size);
-//	printf("map x: %i map y: %i\n",map_size->x_cols, map_size->y_rows);
-	while(m < map_size->y_rows-1)
-	{
-		ft_putstr(map_size->map[m]);
-		if(m != map_size->y_rows)
-			ft_putchar('\n');
-		m++;
-	}
-	while(p < map_size->y_piece)
-	{
-		ft_putstr(map_size->piece[p]);
-	//	if(m != map_size->y_rows)
-			ft_putchar('\n');
-		p++;
-	}
-	
+    t_player *me;
+    t_map_piece *map_size;
+    int m = 0;
+    int p = 0;
 
-/*	find_left_start_p(piece, map_size);
-	find_bottom_end_p(piece, map_size);
-	find_top_start_p(piece, map_size);
-	find_right_end_p(piece, map_size);
-	printf("left start: %i, top start: %i, right end: %i, bottom end: %i", map_size->p_left_start, map_size->p_top_start, map_size->p_right_end, map_size->p_bottom_end);*/
-//	ft_putnbr(get_shape_num_p(piece, map_size));
-//	printf("%i %i\n", map_size->y_piece, map_size->x_piece);
- 	close(fd);
+    if (argc == 1) return (0);
+    int fd = open(argv[1], O_RDONLY);
+    me = (t_player *) malloc (sizeof(*me));
+    init_player(fd,me);
+    map_size  = (t_map_piece *) malloc (sizeof(*map_size));
+    m_size(fd, map_size);
+    read_map(fd, map_size);
+    copy_tmp_map(map_size);
+    piece_size(fd, map_size);
+    read_piece(fd, map_size);
+    get_shape_num_p(map_size);
+    get_os_xs_num(map_size);
+    get_temp_os_xs(map_size);
+    printf("%d %d %d %d %d\n", map_size->add_num, map_size->os_num, map_size->xs_num, map_size->temp_os, map_size->temp_xs);
+    check_placement(map_size, me);
+    printf("%d ", map_size->check);
+
+//  start_map(map, map_size, me);
+//  start_piece(piece, map_size);
+//  printf("map x: %i map y: %i\n",map_size->x_cols, map_size->y_rows);
+    while(m < map_size->y_rows-1)
+    {
+        ft_putstr(map_size->map[m]);
+        if(m != map_size->y_rows)
+            ft_putchar('\n');
+        m++;
+    }
+    while(p < map_size->y_piece)
+    {
+        ft_putstr(map_size->piece[p]);
+    //  if(m != map_size->y_rows)
+            ft_putchar('\n');
+        p++;
+    }
+
+
+/*  find_left_start_p(piece, map_size);
+    find_bottom_end_p(piece, map_size);
+    find_top_start_p(piece, map_size);
+    find_right_end_p(piece, map_size);
+    printf("left start: %i, top start: %i, right end: %i, bottom end: %i", map_size->p_left_start, map_size->p_top_start, map_size->p_right_end, map_size->p_bottom_end);*/
+//  ft_putnbr(get_shape_num_p(piece, map_size));
+//  printf("%i %i\n", map_size->y_piece, map_size->x_piece);
+    close(fd);
 }
-
