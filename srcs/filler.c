@@ -6,7 +6,7 @@
 /*   By: tnghondz <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/24 16:30:30 by tnghondz          #+#    #+#             */
-/*   Updated: 2018/07/14 16:12:58 by tnghondz         ###   ########.fr       */
+/*   Updated: 2018/07/16 18:16:35 by tnghondz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,13 @@
 void	init_player(int fd, t_player *player)
 {
 	char	*line;
-	
-	get_next_line(fd, &line);
+	while(ft_strncmp(line, "$$$ exec p", 10))
+		get_next_line(fd, &line);
 	if((!(ft_strncmp(line, "$$$ exec p", 10))))
 	{
 		if(line[10] == '1')
 		{
+	
 			player->id = '1';
 			player->my_shape = 'O';
 			player->current_shape = 'o';
@@ -45,16 +46,27 @@ void place_piece(t_map_piece *info, t_player *me)
     int p_x;
     int m_x;
     int m_y;
-    
+
+	info->place_ret = 0;
     p_y = info->y_piece - 1;
-    m_y = info->y_rows - 1;
-    while(p_y >= 0 && m_y - info->y_piece >= 0)
+    m_y = info->y_place - 1;
+    while(p_y >= 0)
     {
-    	m_x = info->x_cols - 1;
+		if (info->y_place - info->y_piece < 0)
+		{
+			info->place_ret = 2;
+			return ;
+		}
+    	m_x = info->x_place - 1;
         p_x = info->x_piece - 1;
-        while(p_x >= 0 && (m_x - info->x_piece >= 0))
+        while(p_x >= 0)
         {
-			ft_putchar(info->map[m_y][m_x]);
+	//		ft_putchar(info->map[m_y][m_x]);
+            if(info->x_place - info->x_piece < 0)
+			{
+				info->place_ret = 1;
+				return ;
+			}
             if(info->piece[p_y][p_x] != '.')
                 info->temp_map[m_y][m_x] = me->my_shape;
             m_x--;
@@ -63,7 +75,8 @@ void place_piece(t_map_piece *info, t_player *me)
         m_y--;
         p_y--;
     }
-    
+    info->place_coordinate_x = m_x;
+    info->place_coordinate_y = m_y;
 }
 
 void	m_size(int fd, t_map_piece *map)
@@ -79,9 +92,11 @@ void	m_size(int fd, t_map_piece *map)
 	{
 		y_pos = ft_strchr(line, ' ');
 		map->y_rows = ft_atoi(y_pos);
+		map->y_place = map->y_rows;
 		y_pos++;
 		x_pos = ft_strchr(y_pos, ' ');
 		map->x_cols = ft_atoi(x_pos);
+		map->x_place = map->x_cols;
 		free(line);
 		return ;
 	}
@@ -107,18 +122,19 @@ void read_map(int fd, t_map_piece *read_map_into)
 			get_next_line(fd, &begin);
 		i++;
 	}
-	free(begin);
+//	free(begin);
 	read_map_into->map = map;
 }
 
-void copy_tmp_map(t_map_piece *read_tmp_into)
+char  **copy_tmp_map(t_map_piece *read_tmp_into)
 {
 	char	**tmp;
 
 	if(!(tmp = (char**) malloc (sizeof(*tmp) * read_tmp_into->y_rows)))
-		return ;
+		return (NULL);
 	tmp = read_tmp_into->map;
 	read_tmp_into->temp_map = tmp;
+	return (tmp);
 }
 
 void	read_piece(int fd, t_map_piece *read_piece_into)
@@ -140,7 +156,7 @@ void	read_piece(int fd, t_map_piece *read_piece_into)
 			get_next_line(fd, &begin);
 		i++;
 	}
-	free(begin);
+//	free(begin);
 	read_piece_into->piece = piece;
 }
 
@@ -151,7 +167,6 @@ void	piece_size(int fd, t_map_piece *piece)
 	char	*y_pos;
 
 	get_next_line(fd, &line);
-	ft_putstr(line);
 	while(ft_strncmp(line, "Piece ", 6))
 		get_next_line(fd, &line);
 	if(!(ft_strncmp(line, "Piece ", 6)))
@@ -331,7 +346,13 @@ void find_top_start_p(char **piece, t_map_piece *info)
 			{
 				info->p_top_start = y;
 				return ;
-			}
+			}  	while(m < map_size->y_rows)
+    { 
+  
+        printf("%s\n", map_size->temp_map[m]);
+        m++;
+    }
+
 			x++;
 		}
 		y++;
@@ -410,27 +431,83 @@ void find_bottom_end_p(char **piece, t_map_piece *info)
 	}
 }
 */
-void    check_placement(t_map_piece *p_info, t_player *shape)
+int    check_placement(t_map_piece *p_info, t_player *shape)
 {
 
     if (shape->my_shape == 'O')
     {
         if ((p_info->os_num + p_info->add_num - 1) == p_info->temp_os &&
                 (p_info->xs_num == p_info->temp_xs))
-            p_info->check = 0;
+			return (0);
         else
-            p_info->check = 1;
+			return (1);
     }
     else if (shape->my_shape == 'X')
     {
         if ((p_info->xs_num + p_info->add_num - 1) == p_info->temp_xs &&
                 (p_info->os_num == p_info->temp_os))
-            p_info->check = 0;
+			return (0);
         else
-            p_info->check = 1;
+			return (1);
     }
-    return ;
+    return (-1);
 }
+
+int    move(t_map_piece *info)
+{
+   if (info->place_ret == 1)
+   {
+       info->y_place--;
+       info->x_place = info->x_cols - 1;
+	   info->x_place++;
+   }
+   else if (info->place_ret == 2)
+       return (1);
+   else
+	   info->x_place--;
+   return (0);
+}
+
+void    send_coordinate(t_map_piece *info, t_player *me)
+{
+    if (!(check_placement(info, me)))
+            printf("%d %d\n", info->place_coordinate_x, info->place_coordinate_y);
+}
+
+void	algo(t_map_piece *info, t_player *me)
+{
+	char **temp;
+    temp = copy_tmp_map(info);
+//	info->temp_map = info->map;
+	place_piece(info, me);
+	get_os_xs_num(info);
+	get_temp_os_xs(info);
+	int m = 0;
+	
+	if(!(check_placement(info, me)))
+	{
+		send_coordinate(info, me);
+		return ;
+	}
+	else
+	{
+		if (!move(info))
+		{	
+  			while(m < info->y_rows)
+    		{ 
+       			 printf("%s\n", temp[m]);
+       	 		m++;
+    		}
+	//		ft_strdel(temp);
+		//	ft_strdel(info->temp_map);
+			algo(info, me);
+		}
+		else
+			ft_putchar('c');
+			return ;
+	}
+}
+
 
 int main(int argc, char **argv)
 {
@@ -447,6 +524,8 @@ int main(int argc, char **argv)
     map_size  = (t_map_piece *) malloc (sizeof(*map_size));
     m_size(fd, map_size);
     read_map(fd, map_size);
+    piece_size(fd, map_size);
+    read_piece(fd, map_size);
     copy_tmp_map(map_size);
     get_shape_num_p(map_size);
     get_os_xs_num(map_size);
@@ -458,36 +537,33 @@ int main(int argc, char **argv)
 	start_piece(piece, map_size);
   	printf("map x: %i map y: %i\n",map_size->x_cols, map_size->y_rows);
   */
-    while(m < map_size->y_rows)
+  /*  while(m < map_size->y_rows)
     { 
-    	ft_putnbr(m);
         printf("%s\n", map_size->map[m]);
         m++;
     }
-
+*/
 //	place_piece(map_size, me);
 
 //	ft_putchar('\n');
-
+/*
 	while(t < map_size->y_rows)
     {
         ft_putstr(map_size->temp_map[t]);
-        if(t != map_size->y_rows)
+   //     if(t != map_size->y_rows)
             ft_putchar('\n');
         t++;
     }
-    
-    piece_size(fd, map_size);
-    read_piece(fd, map_size);
-    m = 0;
-  
+  */  
+//    m = 0;
+ /* 
   	while(m < map_size->y_rows)
     { 
   
         printf("%s\n", map_size->temp_map[m]);
         m++;
     }
-
+*/
 /*
     while(p < map_size->y_piece)
     {
@@ -505,5 +581,6 @@ int main(int argc, char **argv)
     printf("left start: %i, top start: %i, right end: %i, bottom end: %i", map_size->p_left_start, map_size->p_top_start, map_size->p_right_end, map_size->p_bottom_end);*/
 //  ft_putnbr(get_shape_num_p(piece, map_size));
 //  printf("%i %i\n", map_size->y_piece, map_size->x_piece);
+	algo(map_size, me);
     close(fd);
 }
