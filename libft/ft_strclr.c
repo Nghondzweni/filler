@@ -14,7 +14,7 @@
 
 void	ft_strclr(char *s)
 {
-	if (s != '\0')
+	if (s)
 	{
 		ft_bzero(s, ft_strlen(s));
 	}

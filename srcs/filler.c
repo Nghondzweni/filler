@@ -19,7 +19,7 @@
 void	init_player(t_player *player)
 {
 	char	*line;
-//	while(ft_strncmp(line, "$$$ exec p", 10))
+	while(ft_strncmp(line, "$$$ exec p", 10))
 		get_next_line(0, &line);
 	if((!(ft_strncmp(line, "$$$ exec p", 10))))
 	{
@@ -110,10 +110,10 @@ void read_map(t_map_piece *read_map_into)
 	char	*begin;
 	int		i;
 	int		x;
-	int		m;
+	// int		m;
 
 	i = 0;
-	m = 0;
+	// m = 0;
 
 	if(!(read_map_into->map = (char**) malloc (sizeof(*map) * read_map_into->y_rows)))
 		return ;
@@ -207,7 +207,7 @@ void	piece_size(t_map_piece *piece)
 	get_next_line(0, &line);
 	while(ft_strncmp(line, "Piece ", 6))
 		get_next_line(0, &line);
-	i\f(!(ft_strncmp(line, "Piece ", 6)))
+	if(!(ft_strncmp(line, "Piece ", 6)))
 	{
 		y_pos = ft_strchr(line, ' ');
 		piece->y_piece = ft_atoi(y_pos);
